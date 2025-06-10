@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../profile/profile_screen.dart';
 import '../analysis/analysis_screen.dart';
 import '../reports/reports_screen.dart';
+import '../../services/servicegemini.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -59,15 +60,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: _selectedIndex == 0
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                // TODO: Implement new analysis action
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('New Analysis'),
-            )
-          : null,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const SimpleGeminiPage()),
+          );
+        },
+        icon: const Icon(Icons.chat_bubble_outline),
+        label: const Text('Gemini Chat'),
+      ),
     );
   }
 }
