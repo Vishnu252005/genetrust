@@ -12,6 +12,16 @@
 
 ---
 
+## 🎥 Demo Video & Slides
+
+- [📹 Watch the Demo Video](https://drive.google.com/file/d/1b3efd3UO07dUhRBDBB6SovGyTELJnbfb/view?usp=sharing)
+  <br><sub>See GeneTrust+ in action: walkthrough of features, UI, and AI capabilities.</sub>
+
+- [📑 View the Project Slides (PPT)](https://docs.google.com/presentation/d/14T_vNoNGHsAHl3vEGOKm3ArsAAVy9A4o/edit?usp=sharing&ouid=105594249138125697169&rtpof=true&sd=true)
+  <br><sub>Get a quick overview of our solution, architecture, and hackathon journey.</sub>
+
+---
+
 ## 🏆 Hackathon Submission: GeneTrust Medical AI
 
 ### 👩‍⚕️ The Problem
