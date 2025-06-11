@@ -81,28 +81,28 @@ Medical information is complex and often inaccessible. Patients and clinicians n
 ## 🌟 Featured Screens
 
 ### 🏠 Home: GeneTrust AI Studio Dashboard
-![Home Screen](screenshots/flutter_01.png)
+![Home Screen](assets/flutter_01.png)
 > **Your launchpad for genetic analysis and AI-powered insights.**
 > Quick Actions let you start a new analysis, view reports, chat with AI, or access settings—all in one modern, intuitive dashboard.
 
 ---
 
 ### 👤 Profile: Personalized & Secure (Firebase-backed)
-![Profile Screen](screenshots/flutter_02.png)
+![Profile Screen](assets/flutter_02.png)
 > **Manage your account, security, and preferences with ease.**
 > Edit your profile, update security settings, manage notifications, and choose your language or theme. All data is securely managed with Firebase Auth and Firestore.
 
 ---
 
 ### 💬 Gemini-Powered AI Chat
-![AI Chat Screen](screenshots/flutter_03.png)
+![AI Chat Screen](assets/flutter_03.png)
 > **Chat with GeneTrust Medical AI for instant, evidence-based medical guidance.**
 > Ask questions, get health tips, and receive friendly, professional answers—always with a clear medical disclaimer. Powered by Google Gemini AI.
 
 ---
 
 ### 🎤 AI-Powered Voice Chat
-![Voice Chat Screen](screenshots/flutter_05.png)
+![Voice Chat Screen](assets/flutter_05.png)
 > **Talk to your medical AI assistant hands-free!**
 > Speak your health questions and get spoken answers. Gemini AI powers the conversation, while the app reads responses aloud for accessibility and convenience.
 
@@ -188,5 +188,21 @@ Medical information is complex and often inaccessible. Patients and clinicians n
 
 ## 🙌 Thank You, Judges!
 GeneTrust Medical AI is about making healthcare more understandable and accessible for everyone. We hope you enjoy trying it as much as we enjoyed building it!
+
+---
+
+## 🚧 The Journey & Challenges
+
+Building GeneTrust+ was not just about writing code—it was a true adventure in cloud, AI, and teamwork. We faced our share of tough moments:
+
+- **Cloud Integration Hurdles:** Setting up secure, real-time connections between Flutter, Firebase, and Gemini AI was a challenge. We wrestled with API limits, authentication quirks, and the ever-changing landscape of cloud services. Debugging cross-platform issues and ensuring data privacy required patience and creativity.
+- **AI & UX Balance:** Making advanced AI feel friendly, safe, and accessible for all users took many iterations. We worked hard to ensure every answer was clear, helpful, and always included the right disclaimers.
+- **Teamwork & Learning:** We learned to communicate, adapt, and support each other—especially when things broke at the worst possible time!
+
+But every late-night bug, every cloud error, and every "aha!" moment made us stronger. We're proud to have built a platform that empowers users to understand their health, ask questions, and get instant, trustworthy answers—anytime, anywhere.
+
+**GeneTrust+ is more than an app. It's a mission to make healthcare knowledge accessible, safe, and human.**
+
+---
 
 
