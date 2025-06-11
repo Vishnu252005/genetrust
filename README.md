@@ -1,3 +1,11 @@
+<div align="center">
+  <img src="assets/image.png" alt="Code The Cloud Hackathon Banner" width="600"/>
+  <br/>
+  <b>This project was built for the <span style="color:#4285F4">Code The Cloud: CCD Edition Hackathon</span>.</b>
+</div>
+
+---
+
 # GeneTrust Medical AI 🚀
 
 **Your AI-powered medical assistant for everyone!**
