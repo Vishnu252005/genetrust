@@ -1,62 +1,149 @@
-# GeneTrust+ 🚀
+# GeneTrust Medical AI 🚀
 
-**Empowering Everyone to Understand Medical Reports Instantly!**
+**Your AI-powered medical assistant for everyone!**
 
 ---
 
-## 🏆 Hackathon Submission: GeneTrust+
+## 🏆 Hackathon Submission: GeneTrust Medical AI
 
 ### 👩‍⚕️ The Problem
-Medical reports are packed with jargon and complexity. Patients and even busy clinicians struggle to quickly grasp the essentials, leading to confusion, anxiety, and missed insights.
+Medical information is complex and often inaccessible. Patients and clinicians need instant, reliable, and understandable medical guidance, but jargon and lack of context create confusion and anxiety.
 
 ### 💡 Our Solution
-**GeneTrust+** is a Flutter app that uses Google Gemini AI to instantly summarize any medical report in plain English. No backend, no waiting—just paste, tap, and understand. Built for privacy, speed, and accessibility.
+**GeneTrust Medical AI** is a Flutter app (with web support) that uses advanced AI to provide:
+- Instant medical Q&A and explanations
+- Voice-based medical assistant
+- Health tips and wellness reminders
+- Symptom checker and BMI calculator
+- All with a modern, accessible UI and privacy-first design
 
 ---
 
-## ✨ What Makes GeneTrust+ Stand Out?
-- **AI Summaries, Instantly:** Paste or type any medical report, get a clear summary in seconds.
-- **Gemini AI On-Device:** All AI logic runs in the app—no server or cloud function needed for AI calls.
-- **Modern, Intuitive UI:** Designed for patients, doctors, and researchers alike.
+## ✨ What Makes GeneTrust Medical AI Stand Out?
+- **Conversational Medical AI:** Ask anything about health, symptoms, or medical terms—get clear, friendly answers.
+- **Voice Assistant:** Speak your questions and get spoken answers, hands-free.
+- **Health Tips:** Daily rotating health and wellness tips.
+- **Symptom Checker:** Select symptoms and get general information (with disclaimers).
+- **BMI Calculator:** Quick, easy BMI calculation and advice.
 - **Firebase Auth:** Secure sign-in for personalized experience.
-- **Sample Report Loader:** Try it out with a single tap!
-- **Error Handling & Feedback:** Always know what's happening.
+- **Web & Mobile:** Deployable to Firebase Hosting for instant web access.
+- **Modern UI:** Clean, responsive, and accessible for all users.
 
 ---
 
 ## 🎥 Quick Demo
 1. **Sign in** (or use guest mode)
-2. **Tap the floating action button** on the home screen: "Analyze Report"
-3. **Paste or type a medical report**
-4. **Tap "Generate Summary"**
-5. **See the AI-powered summary instantly!**
-6. Or, **tap "Load Sample"** to try a pre-filled example
+2. **Try the AI Chat**: Tap "AI Chat" on the home screen
+3. **Ask a medical question** or use the voice assistant
+4. **Check health tips, use the symptom checker, or calculate BMI**
+5. **See instant, AI-powered medical guidance!**
 
 > _Screenshots and demo video can be found in the `/demo` folder_
 
 ---
 
 ## 🛠️ Features At a Glance
-- Gemini AI-powered medical report summarization
-- Clean, responsive Flutter UI
+- Medical AI chat (text and voice)
+- Health tips carousel
+- Symptom checker
+- BMI calculator
 - Firebase authentication
+- Responsive Flutter UI (web & mobile)
 - Riverpod state management
 - No backend required for AI
-- Sample report loader
 - Loading indicators and error messages
 
 ---
 
 ## 🧑‍💻 Tech Stack
-- **Flutter** (UI)
+- **Flutter** (UI, web & mobile)
 - **Dart** (Logic)
-- **Firebase Core & Auth**
-- **Google Gemini AI SDK**
+- **Firebase Core & Auth & Hosting**
+- **Groq/OpenAI API** (for AI chat)
 - **Riverpod**
 
 ---
 
-## 🚀 Try It Yourself (Setup)
+## 🏗️ Architecture
+
+```mermaid
+graph TD;
+  User[User (Web/Mobile)] -->|UI| FlutterApp[Flutter App]
+  FlutterApp -->|Auth| FirebaseAuth[Firebase Auth]
+  FlutterApp -->|Data| Firestore[Firestore (optional)]
+  FlutterApp -->|AI API| GroqAPI[Groq/OpenAI API]
+  FlutterApp -->|Hosting| FirebaseHosting[Firebase Hosting]
+  FlutterApp -->|Voice| TTS_STT[Text-to-Speech & Speech-to-Text]
+
+  subgraph Cloud
+    FirebaseAuth
+    Firestore
+    GroqAPI
+    FirebaseHosting
+  end
+
+  subgraph Device
+    FlutterApp
+    TTS_STT
+  end
+```
+
+### **How it works:**
+- **Flutter App** runs on web and mobile, providing a modern UI.
+- **Firebase Auth** secures user sign-in and personalization.
+- **Firestore** (optional) can store user data, chat history, or logs.
+- **Groq/OpenAI API** powers the medical AI chat and voice assistant.
+- **Text-to-Speech/Speech-to-Text** enables voice interaction.
+- **Firebase Hosting** serves the web app to users instantly.
+
+---
+
+## 🩺 Features (Detailed)
+
+### 1. **Medical AI Chat**
+- Ask any medical question in natural language.
+- Get clear, friendly, evidence-based answers.
+- Medical disclaimers and safety reminders are always included.
+- Handles symptoms, conditions, medications, and general health queries.
+
+### 2. **Voice Medical Assistant**
+- Speak your questions and get spoken answers.
+- Uses advanced speech-to-text and text-to-speech for hands-free interaction.
+- Ideal for accessibility and on-the-go use.
+
+### 3. **Health Tips Carousel**
+- Rotating daily health and wellness tips at the top of the chat.
+- Tips cover hydration, sleep, nutrition, exercise, and more.
+- Designed to encourage healthy habits.
+
+### 4. **Symptom Checker**
+- Select symptoms from a list and get general information or possible causes.
+- Always includes a disclaimer: not a diagnosis, consult a professional.
+- Helps users understand when to seek care.
+
+### 5. **BMI Calculator**
+- Enter height and weight to get your BMI and a health category.
+- Provides instant feedback and general advice.
+
+### 6. **Firebase Authentication**
+- Secure sign-in with Google or email.
+- Personalizes the experience and can enable saving chat history.
+
+### 7. **Web & Mobile Support**
+- Runs on any device: Android, iOS, or web browser.
+- Deployed via Firebase Hosting for instant access.
+
+### 8. **Modern, Accessible UI**
+- Clean, responsive design for all users.
+- Dark/light mode, animations, and accessibility features.
+
+### 9. **Privacy-First**
+- No sensitive data stored without user consent.
+- All AI queries are anonymized and secure.
+
+---
+
+## 🚀 Try It Yourself (Setup & Web Deployment)
 
 1. **Clone the Repo**
    ```sh
@@ -70,10 +157,19 @@ Medical reports are packed with jargon and complexity. Patients and even busy cl
 3. **Firebase Setup**
    - Add your Firebase project and config files (`google-services.json`/`GoogleService-Info.plist`)
    - Enable Firebase Auth
-4. **Gemini AI Setup**
-   - Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-   - Paste it in `lib/services/servicegemini.dart`
-5. **Run the App**
+   - (For web) Set up Firebase Hosting: `firebase init hosting` and set public dir to `build/web`
+4. **AI API Setup**
+   - Get your API key from your AI provider (Groq/OpenAI)
+   - Paste it in the appropriate service file (e.g., `lib/services/servicegemini.dart` or similar)
+5. **Build for Web**
+   ```sh
+   flutter build web
+   ```
+6. **Deploy to Firebase Hosting**
+   ```sh
+   firebase deploy
+   ```
+7. **Run the App Locally**
    ```sh
    flutter run
    ```
@@ -81,9 +177,6 @@ Medical reports are packed with jargon and complexity. Patients and even busy cl
 ---
 
 ## 🙌 Thank You, Judges!
-GeneTrust+ is about making healthcare more understandable for everyone. We hope you enjoy trying it as much as we enjoyed building it!
+GeneTrust Medical AI is about making healthcare more understandable and accessible for everyone. We hope you enjoy trying it as much as we enjoyed building it!
 
----
 
-## 📄 License
-[MIT](LICENSE)

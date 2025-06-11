@@ -3,6 +3,7 @@ import '../profile/profile_screen.dart';
 import '../analysis/analysis_screen.dart';
 import '../reports/reports_screen.dart';
 import '../../services/servicegemini.dart';
+import '../chatbot/advanced_ai_chat.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -63,11 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const SimpleGeminiPage()),
+            MaterialPageRoute(builder: (context) => const AdvancedAIChat()),
           );
         },
-        icon: const Icon(Icons.chat_bubble_outline),
-        label: const Text('Gemini Chat'),
+        icon: const Icon(Icons.smart_toy_outlined),
+        label: const Text('AI Chat'),
       ),
     );
   }
@@ -160,10 +161,15 @@ class _HomeContent extends StatelessWidget {
                 ),
                 _buildActionCard(
                   context,
-                  'Data Upload',
-                  Icons.upload_file_outlined,
+                  'AI Chat',
+                  Icons.smart_toy_outlined,
                   () {
-                    // TODO: Implement data upload action
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AdvancedAIChat(),
+                      ),
+                    );
                   },
                 ),
                 _buildActionCard(
