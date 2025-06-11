@@ -78,6 +78,34 @@ Medical information is complex and often inaccessible. Patients and clinicians n
 - **Text-to-Speech/Speech-to-Text** enables voice interaction.
 - **Firebase Hosting** serves the web app to users instantly.
 
+## 🌟 Featured Screens
+
+### 🏠 Home: GeneTrust AI Studio Dashboard
+![Home Screen](screenshots/flutter_01.png)
+> **Your launchpad for genetic analysis and AI-powered insights.**
+> Quick Actions let you start a new analysis, view reports, chat with AI, or access settings—all in one modern, intuitive dashboard.
+
+---
+
+### 👤 Profile: Personalized & Secure (Firebase-backed)
+![Profile Screen](screenshots/flutter_02.png)
+> **Manage your account, security, and preferences with ease.**
+> Edit your profile, update security settings, manage notifications, and choose your language or theme. All data is securely managed with Firebase Auth and Firestore.
+
+---
+
+### 💬 Gemini-Powered AI Chat
+![AI Chat Screen](screenshots/flutter_03.png)
+> **Chat with GeneTrust Medical AI for instant, evidence-based medical guidance.**
+> Ask questions, get health tips, and receive friendly, professional answers—always with a clear medical disclaimer. Powered by Google Gemini AI.
+
+---
+
+### 🎤 AI-Powered Voice Chat
+![Voice Chat Screen](screenshots/flutter_05.png)
+> **Talk to your medical AI assistant hands-free!**
+> Speak your health questions and get spoken answers. Gemini AI powers the conversation, while the app reads responses aloud for accessibility and convenience.
+
 ---
 
 ## 🩺 Features (Detailed)
