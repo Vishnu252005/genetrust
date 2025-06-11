@@ -66,7 +66,7 @@ Medical information is complex and often inaccessible. Patients and clinicians n
 
 ## 🏗️ Architecture
 
-![GeneTrust+ Architecture](architecture.png)
+![Architecture](assets/architecture.png)
 
 > The GeneTrust+ architecture leverages Flutter, Google Cloud, Gemini AI, Firebase Auth, Firestore, and App Check for a secure, scalable, and intelligent medical assistant experience.
 

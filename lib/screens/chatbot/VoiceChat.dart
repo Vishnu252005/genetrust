@@ -77,6 +77,10 @@ class _VoiceChatState extends State<VoiceChat> with TickerProviderStateMixin {
   // Add this variable at the top of the _VoiceChatState class
   bool _isFirstTimeListening = true;  // Track first-time listening state
 
+  // Gemini API key and endpoint
+  final String _geminiApiKey = "YOUR_GEMINI_API_KEY_HERE";
+  final String _geminiApiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=YOUR_GEMINI_API_KEY_HERE";
+
   @override
   void initState() {
     super.initState();
@@ -358,8 +362,9 @@ class _VoiceChatState extends State<VoiceChat> with TickerProviderStateMixin {
   }
 
   Future<void> _getAIResponse(String userText) async {
-    if (_groqApiKey.isEmpty) {
-      _addStatusMessage("Error: Groq API Key missing.");
+    // Gemini API: no key, no request
+    if (_geminiApiKey.isEmpty) {
+      _addStatusMessage("Error: Gemini API Key missing.");
       _addMessage("System Error: API Key missing.", MessageRole.status);
       setState(() => _isProcessing = false);
       return;
@@ -371,69 +376,65 @@ class _VoiceChatState extends State<VoiceChat> with TickerProviderStateMixin {
       return;
     }
 
-    // Prepare message history for context
-    List<Map<String, String>> messagesPayload = [
-      {"role": "system", "content": "You are GeneTrust Medical AI, a specialized medical voice assistant. Your role is to:\n\n1. Provide general medical information and education\n2. Help users understand their symptoms and conditions\n3. Explain medical terms and procedures\n4. Offer preventive care advice\n5. Guide users to appropriate medical resources\n\nImportant guidelines:\n- Always maintain a professional and empathetic tone\n- Clearly state when information is general and not specific medical advice\n- Encourage users to consult healthcare professionals for personal medical concerns\n- Never make definitive diagnoses or prescribe treatments\n- Prioritize user safety and well-being\n- Include relevant medical disclaimers when appropriate\n- Use evidence-based medical information\n- Be clear about the limitations of AI in medical advice\n\nRemember: You are an AI assistant providing general medical information, not a replacement for professional medical care."},
-      // Include last few turns (e.g., last 4 turns = 8 messages + system prompt)
-      ..._messages
-          .where((m) => m.role == MessageRole.user || m.role == MessageRole.assistant)
-          .toList()
-          .sublist(_messages.length > 9 ? _messages.length - 9 : 0)
-          .map((m) => {"role": m.role.name, "content": m.text})
-          .toList()
-    ];
-    // Make sure the last message is the current user prompt if not already added
-     if (messagesPayload.last["role"] != "user" || messagesPayload.last["content"] != userText) {
-         messagesPayload.add({"role": "user", "content": userText});
-     }
-
+    // Prepare Gemini 'contents' array
+    List<Map<String, dynamic>> contents = [];
+    contents.add({
+      "role": "user",
+      "parts": [
+        "You are GeneTrust Medical AI, a specialized medical voice assistant. Provide clear, evidence-based, and friendly answers. Always include a disclaimer that this is not a substitute for professional medical advice."
+      ]
+    });
+    // Add last few turns for context
+    final history = _messages
+        .where((m) => m.role == MessageRole.user || m.role == MessageRole.assistant)
+        .toList()
+        .sublist(_messages.length > 9 ? _messages.length - 9 : 0);
+    for (final m in history) {
+      contents.add({
+        "role": m.role == MessageRole.user ? "user" : "model",
+        "parts": [m.text],
+      });
+    }
+    // Add the current user prompt if not already present
+    if (contents.isEmpty || contents.last["role"] != "user" || contents.last["parts"][0] != userText) {
+      contents.add({"role": "user", "parts": [userText]});
+    }
 
     try {
       final response = await http.post(
-        Uri.parse(_chatApiUrl),
+        Uri.parse(_geminiApiUrl),
         headers: {
-          "Authorization": "Bearer $_groqApiKey",
           "Content-Type": "application/json",
         },
         body: jsonEncode({
-          "model": "llama-3.1-8b-instant",
-          "messages": messagesPayload,
-          "temperature": 0.7,
-          "max_tokens": 150,
-          "stream": false,
+          "contents": contents,
         }),
       );
 
-      if (!mounted) return; // Check mounted after async gap
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
-        final decodedBody = utf8.decode(response.bodyBytes);
-        final decodedResponse = jsonDecode(decodedBody);
-        final aiResponseText = decodedResponse['choices'][0]['message']['content']?.trim() ?? "Sorry, I couldn't process that.";
-
-        _addMessage(aiResponseText, MessageRole.assistant); // Add AI message
+        final data = jsonDecode(response.body);
+        final aiResponseText = data['candidates']?[0]?['content']?['parts']?[0]?['text']?.trim() ?? "Sorry, I couldn't process that.";
+        _addMessage(aiResponseText, MessageRole.assistant);
         _addStatusMessage("Generating speech...");
         await _generateSpeech(aiResponseText);
-
       } else {
-        _addStatusMessage("AI Error: ${response.statusCode}");
+        _addStatusMessage("Gemini AI Error: ${response.statusCode}");
         _addMessage("Error getting AI response: ${response.statusCode} - ${response.body}", MessageRole.status);
       }
     } catch (e) {
       if (mounted) {
-        _addStatusMessage("AI Request Error: $e");
-        _addMessage("Error contacting AI: $e", MessageRole.status);
+        _addStatusMessage("Gemini AI Request Error: $e");
+        _addMessage("Error contacting Gemini AI: $e", MessageRole.status);
       }
     } finally {
-       // Ensure processing state is reset unless speaking has started
-       if (mounted && !_isSpeaking) {
-         setState(() => _isProcessing = false);
-         // If not speaking, revert status to default prompt
-         if (!_isSpeaking) _addStatusMessage("Tap the mic to start speaking");
-       } else if (mounted && _isSpeaking) {
-         // If speaking started, processing logically ends, but wait for TTS completion handler
-          setState(() => _isProcessing = false);
-       }
+      if (mounted && !_isSpeaking) {
+        setState(() => _isProcessing = false);
+        if (!_isSpeaking) _addStatusMessage("Tap the mic to start speaking");
+      } else if (mounted && _isSpeaking) {
+        setState(() => _isProcessing = false);
+      }
     }
   }
 
@@ -891,19 +892,8 @@ class _VoiceChatState extends State<VoiceChat> with TickerProviderStateMixin {
     } else {
       // If app not recognized, continue with normal AI response
       _addStatusMessage("Processing your request...");
-      await _getAIResponseNormal(text);
+      await _getAIResponse(text);
     }
-  }
-
-  // Move the original AI response logic to a separate method
-  Future<void> _getAIResponseNormal(String userText) async {
-    // Prepare message history for context
-    List<Map<String, String>> messagesPayload = [
-      {"role": "system", "content": "You are GeneTrust Medical AI, a specialized medical voice assistant. Your role is to:\n\n1. Provide general medical information and education\n2. Help users understand their symptoms and conditions\n3. Explain medical terms and procedures\n4. Offer preventive care advice\n5. Guide users to appropriate medical resources\n\nImportant guidelines:\n- Always maintain a professional and empathetic tone\n- Clearly state when information is general and not specific medical advice\n- Encourage users to consult healthcare professionals for personal medical concerns\n- Never make definitive diagnoses or prescribe treatments\n- Prioritize user safety and well-being\n- Include relevant medical disclaimers when appropriate\n- Use evidence-based medical information\n- Be clear about the limitations of AI in medical advice\n\nRemember: You are an AI assistant providing general medical information, not a replacement for professional medical care."},
-      // ... rest of the existing _getAIResponse method ...
-    ];
-    
-    // ... continue with existing AI response code ...
   }
 
   // Add this new method for initial greeting
