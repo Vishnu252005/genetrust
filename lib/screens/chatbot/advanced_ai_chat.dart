@@ -79,8 +79,8 @@ class _AdvancedAIChatState extends State<AdvancedAIChat> {
       ? Theme.of(context).colorScheme.primary
       : Theme.of(context).colorScheme.primary;
 
-  static const String _apiKey = "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";
-  static const String _apiUrl = "https://api.groq.com/openai/v1/chat/completions";
+  static const String _apiKey = "YOUR_GEMINI_API_KEY_HERE";
+  static const String _apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=YOUR_GEMINI_API_KEY_HERE";
 
   // Add these at the top of the class
   String _selectedLanguage = 'python';
@@ -172,7 +172,7 @@ class _AdvancedAIChatState extends State<AdvancedAIChat> {
           "imagePath": widget.initialImage
         });
       });
-      _sendMessageToGroq(_selectedImage);
+      _sendMessageToGemini(_selectedImage);
     }
     // If there's an initial context, add it to the messages
     if (widget.initialContext != null && widget.initialContext!.isNotEmpty) {
@@ -314,11 +314,11 @@ class _AdvancedAIChatState extends State<AdvancedAIChat> {
           Flexible(
             child: Text(
               'GeneTrust Medical AI',
-              style: TextStyle(
-                color: _textColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
+            style: TextStyle(
+              color: _textColor,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -1076,55 +1076,31 @@ class _AdvancedAIChatState extends State<AdvancedAIChat> {
         "content": userMessage
       });
       _isLoading = true;
-      _isStreaming = true;
-      _streamingResponse = '';
       _messages.add({
         "role": "assistant", 
         "content": "",
-        "isStreaming": true,
         "isImage": "false"
       });
     });
 
     try {
-      // Create messages array with context from previous messages
-      List<Map<String, String>> messageHistory = [];
-      
-      // Add system message first
-      messageHistory.add({
-        "role": "system",
-        "content": """You are GeneTrust Medical AI, a specialized medical assistant focused on providing healthcare information and guidance. Your role is to:
-
-1. Provide general medical information and education
-2. Help users understand their symptoms and conditions
-3. Explain medical terms and procedures
-4. Offer preventive care advice
-5. Guide users to appropriate medical resources
-
-Important guidelines:
-- Always maintain a professional and empathetic tone
-- Clearly state when information is general and not specific medical advice
-- Encourage users to consult healthcare professionals for personal medical concerns
-- Never make definitive diagnoses or prescribe treatments
-- Prioritize user safety and well-being
-- Include relevant medical disclaimers when appropriate
-- Use evidence-based medical information
-- Be clear about the limitations of AI in medical advice
-
-Remember: You are an AI assistant providing general medical information, not a replacement for professional medical care."""
+      // Gemini expects 'contents' with 'parts' (text blocks)
+      List<Map<String, dynamic>> contents = [];
+      // System prompt as context
+      contents.add({
+        "role": "user",
+        "parts": [
+          "You are GeneTrust Medical AI, a specialized medical assistant. Provide clear, evidence-based, and friendly answers. Always include a disclaimer that this is not a substitute for professional medical advice."
+        ]
       });
-
-      // Add previous messages for context (limit to last 10 messages)
+      // Add previous messages
       int startIndex = _messages.length > 20 ? _messages.length - 20 : 0;
       for (int i = startIndex; i < _messages.length; i++) {
         final msg = _messages[i];
-        // Skip messages that are images or processing states
-        if (msg['isImage'] == true || msg['content'] == "Processing image...") {
-          continue;
-        }
-        messageHistory.add({
-          "role": msg['role'] as String,
-          "content": msg['content'] as String,
+        if (msg['isImage'] == true || msg['content'] == "Processing image...") continue;
+        contents.add({
+          "role": msg['role'] == 'user' ? 'user' : 'model',
+          "parts": [msg['content'] as String],
         });
       }
 
@@ -1136,8 +1112,8 @@ Remember: You are an AI assistant providing general medical information, not a r
           "Accept": "text/event-stream",
         },
         body: jsonEncode({
-          "model": "llama-3.1-8b-instant",
-          "messages": messageHistory,  // Use the message history instead of just the current message
+          "model": "gemini-pro",
+          "messages": contents,  // Use the message history instead of just the current message
           "temperature": 0.7,
           "max_tokens": 1000,
           "stream": true,
@@ -1454,8 +1430,8 @@ Remember: You are an AI assistant providing general medical information, not a r
           });
         });
 
-        // Send image directly to Groq for analysis
-        await _sendMessageToGroq(webImage);
+        // Send image directly to Gemini for analysis
+        await _sendMessageToGemini(webImage);
 
       } else {
         final XFile? image = await _picker.pickImage(
@@ -1481,8 +1457,8 @@ Remember: You are an AI assistant providing general medical information, not a r
             });
           });
 
-          // Send image directly to Groq for analysis
-          await _sendMessageToGroq(_selectedImage);
+          // Send image directly to Gemini for analysis
+          await _sendMessageToGemini(_selectedImage);
         }
       }
     } catch (e) {
@@ -1554,9 +1530,9 @@ Remember: You are an AI assistant providing general medical information, not a r
     }
   }
 
-  Future<void> _sendMessageToGroq(dynamic image) async {
+  // Gemini Vision API for image analysis
+  Future<void> _sendMessageToGemini(dynamic image) async {
     try {
-      // Convert image to base64
       String base64Image;
       if (image is File) {
         final bytes = await image.readAsBytes();
@@ -1568,45 +1544,31 @@ Remember: You are an AI assistant providing general medical information, not a r
       }
 
       final response = await http.post(
-        Uri.parse(_apiUrl),
+        Uri.parse("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=YOUR_GEMINI_API_KEY_HERE"),
         headers: {
-          "Authorization": "Bearer $_apiKey",
           "Content-Type": "application/json",
         },
         body: jsonEncode({
-          "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-          "messages": [
-            {
-              "role": "system",
-              "content": """You are an AI assistant that analyzes images. When analyzing documents, especially academic ones, structure your response in a clear, organized format using markdown. Include:\n\n1. A brief overview\n2. Main sections with clear headers\n3. Bullet points for key details\n4. Bold text for important terms\n5. Proper spacing and formatting\n6. Mathematical expressions in LaTeX format when needed\n\nMake the response easy to read and visually appealing."""
-            },
+          "contents": [
             {
               "role": "user",
-              "content": [
+              "parts": [
+                {"text": "Please analyze this image and provide a detailed, well-structured response using markdown formatting."},
                 {
-                  "type": "text",
-                  "text": "Please analyze this image and provide a detailed, well-structured response using markdown formatting."
-                },
-                {
-                  "type": "image_url",
-                  "image_url": {
-                    "url": "data:image/jpeg;base64,$base64Image"
+                  "inlineData": {
+                    "mimeType": "image/jpeg",
+                    "data": base64Image
                   }
                 }
               ]
             }
-          ],
-          "temperature": 0.7,
-          "max_tokens": 1024,
-          "top_p": 1,
-          "stream": false
+          ]
         }),
       );
 
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        String aiResponse = data['choices'][0]['message']['content'];
-
+        final data = jsonDecode(response.body);
+        String aiResponse = data['candidates']?[0]?['content']?['parts']?[0]?['text'] ?? "";
         setState(() {
           _messages.add({
             "role": "assistant",
@@ -1615,7 +1577,6 @@ Remember: You are an AI assistant providing general medical information, not a r
           });
         });
       } else {
-        print('Error response: ${response.body}');
         setState(() {
           _messages.add({
             "role": "assistant",
@@ -1625,7 +1586,6 @@ Remember: You are an AI assistant providing general medical information, not a r
         });
       }
     } catch (e) {
-      print('Groq AI Error: $e');
       setState(() {
         _messages.add({
           "role": "assistant",
@@ -1696,7 +1656,7 @@ Remember: You are an AI assistant providing general medical information, not a r
           "Accept": "text/event-stream",
         },
         body: jsonEncode({
-          "model": "llama-3.1-8b-instant",
+          "model": "gemini-pro",
           "messages": [
             {
               "role": "system",
@@ -1778,8 +1738,8 @@ Remember: You are an AI assistant providing general medical information, not a r
 
       if (widget.initialImage != null) {
          final File imageFile = File(widget.initialImage!); // Load the image file
-         // Send the image directly to Groq AI for analysis
-         await _sendMessageToGroq(imageFile);
+         // Send the image directly to Gemini AI for analysis
+         await _sendMessageToGemini(imageFile);
       }
 
     } catch (e) {

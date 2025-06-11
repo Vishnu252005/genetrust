@@ -59,40 +59,22 @@ Medical information is complex and often inaccessible. Patients and clinicians n
 - **Flutter** (UI, web & mobile)
 - **Dart** (Logic)
 - **Firebase Core & Auth & Hosting**
-- **Groq/OpenAI API** (for AI chat)
+- **Google Gemini AI API** (for AI chat)
 - **Riverpod**
 
 ---
 
 ## 🏗️ Architecture
 
-```mermaid
-graph TD;
-  User[User (Web/Mobile)] -->|UI| FlutterApp[Flutter App]
-  FlutterApp -->|Auth| FirebaseAuth[Firebase Auth]
-  FlutterApp -->|Data| Firestore[Firestore (optional)]
-  FlutterApp -->|AI API| GroqAPI[Groq/OpenAI API]
-  FlutterApp -->|Hosting| FirebaseHosting[Firebase Hosting]
-  FlutterApp -->|Voice| TTS_STT[Text-to-Speech & Speech-to-Text]
+![GeneTrust+ Architecture](architecture.png)
 
-  subgraph Cloud
-    FirebaseAuth
-    Firestore
-    GroqAPI
-    FirebaseHosting
-  end
-
-  subgraph Device
-    FlutterApp
-    TTS_STT
-  end
-```
+> The GeneTrust+ architecture leverages Flutter, Google Cloud, Gemini AI, Firebase Auth, Firestore, and App Check for a secure, scalable, and intelligent medical assistant experience.
 
 ### **How it works:**
 - **Flutter App** runs on web and mobile, providing a modern UI.
 - **Firebase Auth** secures user sign-in and personalization.
 - **Firestore** (optional) can store user data, chat history, or logs.
-- **Groq/OpenAI API** powers the medical AI chat and voice assistant.
+- **Google Gemini AI API** powers the medical AI chat and voice assistant.
 - **Text-to-Speech/Speech-to-Text** enables voice interaction.
 - **Firebase Hosting** serves the web app to users instantly.
 
@@ -159,8 +141,8 @@ graph TD;
    - Enable Firebase Auth
    - (For web) Set up Firebase Hosting: `firebase init hosting` and set public dir to `build/web`
 4. **AI API Setup**
-   - Get your API key from your AI provider (Groq/OpenAI)
-   - Paste it in the appropriate service file (e.g., `lib/services/servicegemini.dart` or similar)
+   - Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Paste it in `lib/services/servicegemini.dart` or the appropriate config file
 5. **Build for Web**
    ```sh
    flutter build web
